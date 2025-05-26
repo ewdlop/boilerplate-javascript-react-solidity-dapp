@@ -434,10 +434,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments / 致谢
 
-- Ethereum Foundation for Web3 standards / 以太坊基金会的 Web3 标准
-- OpenZeppelin for secure contract patterns / OpenZeppelin 的安全合约模式
-- Ant Design for beautiful UI components / Ant Design 的美观 UI 组件
-- Ganache for local blockchain development / Ganache 的本地区块链开发
+- **Ethereum Foundation** for Web3 standards and blockchain infrastructure / 以太坊基金会的 Web3 标准和区块链基础设施
+- **OpenZeppelin** for secure smart contract patterns and libraries / OpenZeppelin 的安全智能合约模式和库
+- **Ant Design** for the comprehensive React UI component library that powers our beautiful interface / Ant Design 提供的全面 React UI 组件库，为我们的美观界面提供支持
+- **Ganache** for local blockchain development and testing environment / Ganache 的本地区块链开发和测试环境
+- **React Team** for the powerful frontend framework / React 团队提供的强大前端框架
+- **Redux Toolkit** for efficient state management / Redux Toolkit 的高效状态管理
+- **Vite** for fast development build tooling / Vite 的快速开发构建工具
+- **Web3.js** for Ethereum blockchain interaction / Web3.js 的以太坊区块链交互功能
 
 ---
 
