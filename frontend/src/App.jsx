@@ -31,7 +31,7 @@ function App() {
         </span>
       ),
       children: (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+        <div className="overview-grid">
           <TokenBalance />
           <TokenTransfer />
         </div>
@@ -103,12 +103,20 @@ function App() {
           </Space>
         </div>
       </Header>
-      <Content className="content" style={{ padding: '24px' }}>
+      <Content className="content" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
         <Tabs
           defaultActiveKey="overview"
           items={tabItems}
           size="large"
-          tabBarStyle={{ marginBottom: '24px' }}
+          tabBarStyle={{ 
+            marginBottom: '24px',
+            position: 'sticky',
+            top: 0,
+            zIndex: 10,
+            background: 'white',
+            paddingTop: '8px'
+          }}
+          style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
         />
       </Content>
     </Layout>
