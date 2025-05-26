@@ -27,7 +27,7 @@ function TokenApproval() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
         throw new Error(errorData.error || 'Approval failed');
       }
 
@@ -49,7 +49,8 @@ function TokenApproval() {
       form.resetFields();
     } catch (error) {
       console.error('Approval error:', error);
-      message.error(`Approval failed: ${error.message} / 授权失败: ${error.message}`);
+      const errorMessage = error.message || 'Network connection failed';
+      message.error(`Approval failed: ${errorMessage} / 授权失败: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -61,12 +62,12 @@ function TokenApproval() {
       const response = await fetch(`http://localhost:3000/allowance/${values.owner}/${values.spender}`);
       
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
         throw new Error(errorData.error || 'Failed to check allowance');
       }
 
       const result = await response.json();
-      const allowanceAmount = (Number(result.allowance) / 1e18).toLocaleString();
+      const allowanceAmount = (Number(result.allowance || 0) / 1e18).toLocaleString();
       
       const newAllowance = {
         id: Date.now(),
@@ -82,7 +83,8 @@ function TokenApproval() {
       allowanceForm.resetFields();
     } catch (error) {
       console.error('Allowance check error:', error);
-      message.error(`Failed to check allowance: ${error.message} / 检查授权额度失败: ${error.message}`);
+      const errorMessage = error.message || 'Network connection failed';
+      message.error(`Failed to check allowance: ${errorMessage} / 检查授权额度失败: ${errorMessage}`);
     } finally {
       setCheckingAllowance(false);
     }
@@ -104,7 +106,7 @@ function TokenApproval() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
         throw new Error(errorData.error || 'Revoke failed');
       }
 
@@ -130,7 +132,8 @@ function TokenApproval() {
       }
     } catch (error) {
       console.error('Revoke error:', error);
-      message.error(`Revoke failed: ${error.message} / 撤销失败: ${error.message}`);
+      const errorMessage = error.message || 'Network connection failed';
+      message.error(`Revoke failed: ${errorMessage} / 撤销失败: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -166,8 +169,8 @@ function TokenApproval() {
       dataIndex: 'allowance',
       key: 'allowance',
       render: (allowance) => (
-        <Text strong style={{ color: Number(allowance.replace(/,/g, '')) > 0 ? 'green' : 'red' }}>
-          {allowance} STK
+        <Text strong style={{ color: Number((allowance || '0').replace(/,/g, '')) > 0 ? 'green' : 'red' }}>
+          {allowance || '0'} STK
         </Text>
       ),
     },
@@ -190,7 +193,7 @@ function TokenApproval() {
           >
             Refresh / 刷新
           </Button>
-          {Number(record.allowance.replace(/,/g, '')) > 0 && (
+          {Number((record.allowance || '0').replace(/,/g, '')) > 0 && (
             <Button 
               type="text" 
               danger 

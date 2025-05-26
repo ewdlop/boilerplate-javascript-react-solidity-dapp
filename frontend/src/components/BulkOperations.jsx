@@ -1,9 +1,10 @@
-import { Card, Form, Input, Button, Typography, message, Space, Table, Tag, Upload, Divider } from 'antd';
+import { Card, Form, Input, Button, Typography, message, Space, Table, Tag, Divider } from 'antd';
 import { useState } from 'react';
-import { PlusOutlined, DeleteOutlined, UploadOutlined, SendOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, SendOutlined } from '@ant-design/icons';
 import { useTransferTokensMutation } from '../store/apiSlice';
 
-const { Title, Text, TextArea } = Typography;
+const { Title, Text } = Typography;
+const { TextArea } = Input;
 
 function BulkOperations() {
   const [form] = Form.useForm();
