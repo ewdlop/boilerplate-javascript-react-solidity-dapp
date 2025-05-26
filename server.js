@@ -171,8 +171,155 @@ app.post('/transfer', async (req, res) => {
   }
 });
 
+// Token approval endpoint
+app.post('/approve', async (req, res) => {
+  try {
+    if (!contract) {
+      return res.status(404).json({ error: 'Contract not deployed' });
+    }
+    const { owner, spender, amount } = req.body;
+    
+    // Validate addresses
+    if (!web3.utils.isAddress(owner) || !web3.utils.isAddress(spender)) {
+      return res.status(400).json({ error: 'Invalid Ethereum address format' });
+    }
+
+    // Verify contract exists
+    const code = await web3.eth.getCode(contractInfo.address);
+    if (code === '0x') {
+      return res.status(404).json({ error: 'Contract not found at address' });
+    }
+    
+    // Convert amount to wei
+    const amountInWei = web3.utils.toWei(amount.toString(), 'ether');
+    
+    // Send the approval transaction
+    const receipt = await contract.methods.approve(spender, amountInWei).send({
+      from: owner,
+      gas: 200000
+    });
+    
+    res.json({ 
+      transactionHash: receipt.transactionHash,
+      owner,
+      spender,
+      amount: amountInWei
+    });
+  } catch (error) {
+    console.error('Approval error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Check allowance endpoint
+app.get('/allowance/:owner/:spender', async (req, res) => {
+  try {
+    if (!contract) {
+      return res.status(404).json({ error: 'Contract not deployed' });
+    }
+
+    const { owner, spender } = req.params;
+    
+    // Validate addresses
+    if (!web3.utils.isAddress(owner) || !web3.utils.isAddress(spender)) {
+      return res.status(400).json({ error: 'Invalid Ethereum address format' });
+    }
+
+    // Verify contract exists
+    const code = await web3.eth.getCode(contractInfo.address);
+    if (code === '0x') {
+      return res.status(404).json({ error: 'Contract not found at address' });
+    }
+
+    // Get allowance
+    const allowance = await contract.methods.allowance(owner, spender).call();
+    
+    res.json({ 
+      allowance: allowance.toString(),
+      owner,
+      spender
+    });
+  } catch (error) {
+    console.error('Allowance check error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get total supply endpoint
+app.get('/total-supply', async (req, res) => {
+  try {
+    if (!contract) {
+      return res.status(404).json({ error: 'Contract not deployed' });
+    }
+
+    // Verify contract exists
+    const code = await web3.eth.getCode(contractInfo.address);
+    if (code === '0x') {
+      return res.status(404).json({ error: 'Contract not found at address' });
+    }
+
+    const totalSupply = await contract.methods.totalSupply().call();
+    
+    res.json({ 
+      totalSupply: totalSupply.toString()
+    });
+  } catch (error) {
+    console.error('Total supply error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get token info endpoint
+app.get('/token-info', async (req, res) => {
+  try {
+    if (!contract) {
+      return res.status(404).json({ error: 'Contract not deployed' });
+    }
+
+    // Verify contract exists
+    const code = await web3.eth.getCode(contractInfo.address);
+    if (code === '0x') {
+      return res.status(404).json({ error: 'Contract not found at address' });
+    }
+
+    const [name, symbol, decimals, totalSupply] = await Promise.all([
+      contract.methods.name().call(),
+      contract.methods.symbol().call(),
+      contract.methods.decimals().call(),
+      contract.methods.totalSupply().call()
+    ]);
+    
+    res.json({ 
+      name,
+      symbol,
+      decimals: decimals.toString(),
+      totalSupply: totalSupply.toString(),
+      address: contractInfo.address
+    });
+  } catch (error) {
+    console.error('Token info error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log('Contract address:', contractInfo?.address || 'Not deployed');
-}); 
+
+// Function to start server with port fallback
+const startServer = (port) => {
+  const server = app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+    console.log('Contract address:', contractInfo?.address || 'Not deployed');
+  }).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${port} is already in use. Trying port ${port + 1}...`);
+      startServer(port + 1);
+    } else {
+      console.error('Server error:', err);
+      process.exit(1);
+    }
+  });
+  return server;
+};
+
+// Start the server
+startServer(PORT); 

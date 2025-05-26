@@ -29,12 +29,24 @@ function TokenTransfer() {
 
   const handleTransfer = async (values) => {
     try {
-      await transferTokens({
+      const result = await transferTokens({
         from: values.from,
         to: values.to,
         amount: values.amount,
       }).unwrap();
-      message.success('Transfer successful');
+      message.success('Transfer successful / 转账成功');
+      
+      // Add to transaction history
+      if (window.addTransactionToHistory) {
+        window.addTransactionToHistory({
+          type: 'transfer',
+          from: values.from,
+          to: values.to,
+          amount: values.amount,
+          status: 'success',
+          hash: result.transactionHash
+        });
+      }
       
       // Update addresses and show balances
       setSourceAddress(values.from);
@@ -49,7 +61,19 @@ function TokenTransfer() {
       
       form.resetFields();
     } catch (error) {
-      message.error(error.data || 'Transfer failed');
+      // Add failed transaction to history
+      if (window.addTransactionToHistory) {
+        window.addTransactionToHistory({
+          type: 'transfer',
+          from: values.from,
+          to: values.to,
+          amount: values.amount,
+          status: 'failed',
+          hash: null
+        });
+      }
+      
+      message.error(error.data || 'Transfer failed / 转账失败');
     }
   };
 
