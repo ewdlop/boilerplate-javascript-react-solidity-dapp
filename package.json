@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "deploy": "node scripts/deploy.js",
+    "deploy:staking": "node scripts/deploy-staking.js",
+    "deploy:lottery": "node scripts/deploy-lottery.js",
+    "deploy:all": "node scripts/deploy-all.js",
     "start:ganache": "node scripts/start-ganache.js",
     "dev": "concurrently \"npm run start:ganache\" \"npm start\"",
     "test": "echo \"Error: no test specified\" && exit 1"
