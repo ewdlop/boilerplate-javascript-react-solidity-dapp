@@ -59,12 +59,6 @@ npm run dev
 The application uses Ganache for local testing. Available test accounts:
 应用程序使用 Ganache 进行本地测试。可用的测试账户：
 
-```
-Account 0: 0x3cb9500d033687e5a5f865c7c17f9df6ef9f8156
-Account 1: 0x97eb2b8193bf0cb60114a1ffbdac5ba9e4688be9
-Account 2: 0x9c7d60f90b0839ff1accdc1c27afc94bd735de84
-```
-
 ## Project Structure / 项目结构
 
 ```
